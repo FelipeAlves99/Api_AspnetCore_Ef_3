@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Shop.Data;
 using Shop.Models;
 
@@ -17,8 +15,8 @@ namespace Shop.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Category>>> Get([FromServices] DataContext context)
         {
-            var categories = context.Categories.AsNoTracking().ToListAsync();
-            return Ok(categories.Result);            
+            var categories = await context.Categories.AsNoTracking().ToListAsync();
+            return Ok(categories);
         }
 
         [HttpGet("{id:int}")]
@@ -26,8 +24,8 @@ namespace Shop.Controllers
             int id,
             [FromServices] DataContext context)
         {
-            var category = context.Categories.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
-            return Ok(category.Result); 
+            var category = await context.Categories.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+            return Ok(category);
         }
 
         [HttpPost]
