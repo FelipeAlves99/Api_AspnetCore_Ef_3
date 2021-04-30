@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shop.Data;
@@ -15,6 +16,7 @@ namespace Shop.Controllers
     public class UserController : ControllerBase
     {
         [HttpGet]
+        [Authorize(Roles = "manager")]
         public async Task<ActionResult<List<User>>> Get([FromServices] DataContext context)
         {
             var users = await context.Users.AsNoTracking().ToListAsync();
@@ -22,6 +24,7 @@ namespace Shop.Controllers
         }
 
         [HttpGet("{id:int}")]
+        [Authorize(Roles = "manager")]
         public async Task<ActionResult<Category>> GetById(
             int id,
             [FromServices] DataContext context)
@@ -31,6 +34,7 @@ namespace Shop.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<ActionResult<User>> Post(
             [FromServices] DataContext context,
             [FromBody] User model)
@@ -55,6 +59,7 @@ namespace Shop.Controllers
         }
 
         [HttpPost("login")]
+        [AllowAnonymous]
         public async Task<ActionResult<dynamic>> Authenticate(
             [FromBody] User model,
             [FromServices] DataContext context)
@@ -78,6 +83,7 @@ namespace Shop.Controllers
         }
 
         [HttpPut("{id:int}")]
+        [Authorize(Roles = "manager")]
         public async Task<ActionResult<List<User>>> Put(
             int id,
             [FromBody] User model,
@@ -107,6 +113,7 @@ namespace Shop.Controllers
         }
 
         [HttpDelete("{id:int}")]
+        [Authorize(Roles = "manager")]
         public async Task<ActionResult<User>> Delete(
             int id,
             [FromServices] DataContext context
