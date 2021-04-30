@@ -48,7 +48,7 @@ namespace Shop.Controllers
 
         [HttpPost]
         [Authorize(Roles = "employee")]
-        public async Task<ActionResult<List<Product>>> Post(
+        public async Task<ActionResult<Product>> Post(
             [FromBody] Product model,
             [FromServices] DataContext context)
         {
@@ -70,7 +70,7 @@ namespace Shop.Controllers
 
         [HttpPut("{id:int}")]
         [Authorize(Roles = "manager")]
-        public async Task<ActionResult<List<Product>>> Put(
+        public async Task<ActionResult<Product>> Put(
             int id,
             [FromBody] Product model,
             [FromServices] DataContext context)
