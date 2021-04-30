@@ -10,12 +10,15 @@ using Shop.Models;
 namespace Shop.Controllers
 {
     [ApiController]
-    [Route("categories")]
+    [Route("v1/categories")]
     public class CategoryController : ControllerBase
     {
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<List<Category>>> Get([FromServices] DataContext context)
+        [ResponseCache(VaryByHeader = "User-Agent", Location = ResponseCacheLocation.Any, Duration = 30)]
+        // [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public async Task<ActionResult<List<Category>>> Get(
+            [FromServices] DataContext context)
         {
             var categories = await context.Categories.AsNoTracking().ToListAsync();
             return Ok(categories);
@@ -33,7 +36,7 @@ namespace Shop.Controllers
 
         [HttpPost]
         [Authorize(Roles = "employee")]
-        public async Task<ActionResult<List<Category>>> Post(
+        public async Task<ActionResult<Category>> Post(
             [FromBody] Category model,
             [FromServices] DataContext context)
         {
@@ -55,7 +58,7 @@ namespace Shop.Controllers
 
         [HttpPut("{id:int}")]
         [Authorize(Roles = "manager")]
-        public async Task<ActionResult<List<Category>>> Put(
+        public async Task<ActionResult<Category>> Put(
             int id,
             [FromBody] Category model,
             [FromServices] DataContext context)
