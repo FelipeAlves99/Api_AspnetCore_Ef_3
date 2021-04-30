@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shop.Data;
 using Shop.Models;
+using Shop.Services;
 
 namespace Shop.Controllers
 {
@@ -17,7 +18,7 @@ namespace Shop.Controllers
         public async Task<ActionResult<List<User>>> Get([FromServices] DataContext context)
         {
             var users = await context.Users.AsNoTracking().ToListAsync();
-            return Ok(users);            
+            return Ok(users);
         }
 
         [HttpGet("{id:int}")]
@@ -26,28 +27,54 @@ namespace Shop.Controllers
             [FromServices] DataContext context)
         {
             var user = await context.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
-            return Ok(user); 
-        }        
+            return Ok(user);
+        }
 
         [HttpPost]
-        public async Task<ActionResult<List<User>>> Post(
-            [FromBody] User model,
-            [FromServices] DataContext context)
+        public async Task<ActionResult<User>> Post(
+            [FromServices] DataContext context,
+            [FromBody] User model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             try
             {
+                model.Role = "employee";
+
                 context.Users.Add(model);
                 await context.SaveChangesAsync();
 
-                return Ok(model);
+                model.Password = "";
+                return model;
             }
-            catch
+            catch (Exception)
             {
-                return BadRequest(new { message = "Não foi possível adicionar o usuário" });
+                return BadRequest(new { message = "Não foi possível criar o usuário" });
             }
+        }
+
+        [HttpPost("login")]
+        public async Task<ActionResult<dynamic>> Authenticate(
+            [FromBody] User model,
+            [FromServices] DataContext context)
+        {
+            var user = await context.Users
+                .AsNoTracking()
+                .Where(u => u.Username == model.Username && u.Password == model.Password)
+                .FirstOrDefaultAsync();
+
+            if (user == null)
+                return NotFound(new { message = "Usuário ou senha inválidos" });
+
+            var token = TokenService.GenerateToken(user);
+            user.Password = "";
+
+            return new
+            {
+                user = user,
+                token = token
+            };
         }
 
         [HttpPut("{id:int}")]
