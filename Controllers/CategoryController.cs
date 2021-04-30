@@ -79,7 +79,7 @@ namespace Shop.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult<List<Category>>> Delete(
+        public async Task<ActionResult<Category>> Delete(
             int id,
             [FromServices] DataContext context
         )

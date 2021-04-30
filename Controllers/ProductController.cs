@@ -93,14 +93,14 @@ namespace Shop.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult<List<Product>>> Delete(
+        public async Task<ActionResult<Product>> Delete(
             int id,
             [FromServices] DataContext context
         )
         {
             var product = await context.Products.FirstOrDefaultAsync(x => x.Id == id);
             if (product == null)
-                return BadRequest(new { message = "Categoria não encontrada" });
+                return BadRequest(new { message = "Produto não encontrada" });
 
             try
             {
