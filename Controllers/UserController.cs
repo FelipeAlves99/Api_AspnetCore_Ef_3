@@ -12,7 +12,7 @@ using Shop.Services;
 namespace Shop.Controllers
 {
     [ApiController]
-    [Route("users")]
+    [Route("v1/users")]
     public class UserController : ControllerBase
     {
         [HttpGet]
